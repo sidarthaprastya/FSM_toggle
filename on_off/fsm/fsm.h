@@ -3,9 +3,11 @@
 
 #define STATE_ON    1
 #define STATE_OFF   0
+#define STATE_HOLD  11
+#define STATE_DEBOUNCE 3
 
-// void delay(int num_seconds);
+void delay(float num_seconds);
 
-void fsm(int input, int *state);
+void fsm_onoff(int input, int *state, int *debounce_count, int *hold_count);
 
 #endif

@@ -4,9 +4,9 @@
 #include <time.h>
 
 
-void delay(int num_seconds){
+void delay(float num_seconds){
     // Converting time into milli_seconds
-    int ms = 1000 * num_seconds;
+    float ms = 1000 * num_seconds;
  
     // Storing start time
     clock_t start_time = clock();
