@@ -22,24 +22,25 @@ void led_config()
 
 void app_main()
 {   
-    int input, output, debounce_count, state;
+    int input, output, debounce_count, state, hold_count;
     button_config();
     led_config();
+
+    debounce_count = 0;
+    hold_count = 0;
 
     // Initial FSM State
     state = STATE_OFF;
 
     while (1) {
-        // Push button bekerja pada mode PULLUP
-        // sehingga apabila ditekan, maka terbaca sebagai 0
-        if (gpio_get_level(BUTTON) == 1) { 
+        if (gpio_get_level(BUTTON) == 1) { //PULLUP
             input = 0;
         }
         else{
             input = 1;
         }
 
-        fsm_toggle(input, &state, &output, &debounce_count);
+        fsm_onoff(input, &state, &output, &debounce_count, &hold_count);
         gpio_set_level(LED, output);
     }
 }

@@ -15,46 +15,53 @@ void delay(float num_seconds){
     while (clock() < start_time + ms);
 }
 
-void fsm_toggle(int input, int *state, int *debounce_count){
-    switch (*state){
-        case STATE_ON:
-            if (!input){
-                break;
-            }
-            else{
+void fsm_toggle(int input, int *state, int *output, int *debounce_count){
+    switch (*state){        
+        case STATE_OFF:
+            *output = 0;
+            // Tombol dilepas
+            if(!input && *debounce_count == 0){
                 *state = DEBOUNCE_OFF;
-                *debounce_count = 0;
-                break;
             }
+            // Tombol ditekan setelah debounce
+            else if (input && *debounce_count >= 300){
+                *state = STATE_ON;
+                *debounce_count = 0;
+            }
+            break;
+        
         case DEBOUNCE_OFF:
-            if (*debounce_count < 100){
+            // Debounce 300 ms
+            if (*debounce_count < 300){
                 *debounce_count += 1;
-                break;
             }
             else{
                 *state = STATE_OFF;
-                break;
             }
+            break;
         
-        case STATE_OFF:
-            if(!input){
-                break;
-            }
-            else{
+        case STATE_ON:
+            *output = 1;
+            // Tombol dilepas
+            if (!input && *debounce_count == 0){
                 *state = DEBOUNCE_ON;
-                *debounce_count = 0;
-                break;
             }
-        
+            // Tombol ditekan setelah debounce
+            else if (input && *debounce_count >= 300){
+                *state = STATE_OFF;
+                *debounce_count = 0;
+            }
+            break;
+
         case DEBOUNCE_ON:
-            if (*debounce_count < 100){
+            // Debounce 300 ms
+            if (*debounce_count < 300){
                 *debounce_count += 1;
-                break;
             }
             else{
                 *state = STATE_ON;
-                break;
             }
+            break;
 
         default:
             break;

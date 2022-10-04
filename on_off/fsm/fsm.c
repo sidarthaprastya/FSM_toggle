@@ -14,54 +14,59 @@ void delay(float num_seconds){
     while (clock() < start_time + ms);
 }
 
-void fsm_onoff(int input, int *state, int *debounce_count, int *hold_count){
+void fsm_onoff(int input, int *state, int *output, int *debounce_count, int *hold_count){
     switch (*state){
+        case STATE_OFF:
+            *output = 0;
+            if(!input){
+                // debounce dihitung mulai saat tombol dilepas
+                *debounce_count += 1;
+                // membatasi debounce agar tidak overflow
+                if (*debounce_count >= 200000){
+                   *debounce_count = 300;
+                }
+            }
+            // debounce saat menekan tombol
+            else if (input && *debounce_count >= 300){
+                *state = STATE_ON;
+                *output = 1;
+                *debounce_count = 0;
+                
+            }
+            break;
         case STATE_ON:
             if (!input){
-                break;
+                // debounce dihitung mulai saat tombol dilepas
+                *debounce_count += 1;
+                // membatasi debounce agar tidak overflow
+                if (*debounce_count >= 200000){
+                   *debounce_count = 300;
+                }
             }
-            else{
+            // Tombol ditekan dan debounce telah melebihi
+            else if (input && *debounce_count >= 300){
                 *state = STATE_HOLD;
                 *hold_count = 0;
-                break;
             }
-        case STATE_HOLD:
-            if (*hold_count < 1000 && input){
-                *hold_count += 1;
-                break;
-            }
-            else if (*hold_count >= 1000 && input){
-                *state = STATE_OFF;
-                break;
-            }
-            else{
-                *state = STATE_ON;
-                break;
-            }
-        
-        case STATE_OFF:
-            if(!input){
-                *hold_count = 0;
-                break;
-            }
-            else if (input && *hold_count == 0){
-                *state = STATE_DEBOUNCE;
-                *debounce_count = 0;
-                break;
-            }
-        
-        case STATE_DEBOUNCE:
-            if (*debounce_count < 100){
-                *debounce_count += 1;
-                break;
-            }
-            else{
-                *state = STATE_ON;
-                break;
-            }
-
-        default:
             break;
+        
+        case STATE_HOLD:
+            // tombol ditekan kurang dari 1 detik
+            if (input && *hold_count < 1000){
+                *hold_count += 1;
+            }
+            // tombol ditekan lebih dari 1 detik
+            else if (input && *hold_count >= 1000){
+                *state = STATE_OFF;
+                *output = 0;
+                *debounce_count = 0;
+            }
+            // tombol dilepas saat kurang dari 1 detik
+            else if (!input && *hold_count < 1000){
+                *state = STATE_ON;
+                *output = 1;
+            }
+            break;
+		
     }
-
 }

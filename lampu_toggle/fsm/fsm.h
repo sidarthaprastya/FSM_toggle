@@ -6,8 +6,8 @@
 #define DEBOUNCE_OFF 10
 #define DEBOUNCE_ON 11
 
-void delay(int num_seconds);
+void delay(float num_seconds);
 
-void fsm_toggle(int input, int *state, int *debounce_count);
+void fsm_toggle(int input, int *state, int *output, int *debounce_count);
 
 #endif
