@@ -68,5 +68,7 @@ void fsm_onoff(int input, int *state, int *output, int *debounce_count, int *hol
             }
             break;
 		
+        default:
+            break;
     }
 }

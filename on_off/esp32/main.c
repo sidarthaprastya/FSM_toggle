@@ -6,6 +6,7 @@
 
 #define LED     GPIO_NUM_2
 #define BUTTON  GPIO_NUM_13
+const TickType_t xDelay = 1 / portTICK_PERIOD_MS;
 
 void button_config()
 {
@@ -42,5 +43,6 @@ void app_main()
 
         fsm_onoff(input, &state, &output, &debounce_count, &hold_count);
         gpio_set_level(LED, output);
+        printf("%d, %d, %d\n", input, state, debounce_count); 
     }
 }
